@@ -39,7 +39,7 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex h-14 items-center justify-between">
         <div className="flex items-center space-x-6">
           <NavLink to="/" className="font-bold">
-            Hotel
+            Ledger
           </NavLink>
           <nav className="hidden md:flex items-center space-x-6">
             <NavLink to="/" className={linkStyles}>
@@ -55,7 +55,7 @@ export default function Header() {
                 render={
                   <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
+                      <AvatarImage src="https://github.com/shaddcn.png" alt="shadcn" />
                       <AvatarFallback>
                         {loginUser.username.toUpperCase().substring(0, 1)}
                       </AvatarFallback>

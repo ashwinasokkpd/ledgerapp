@@ -22,6 +22,7 @@ const AdminDashboard = () => {
     <>
       <AdminHeader />
       <div>
+        <h2>Welcome admin</h2>
         <button onClick={logout}>Logout</button>
         <div>{data}</div>
         <div>{count}</div>

@@ -1,0 +1,1 @@
+[{"createdAt":"2026-11-05T10:45:39.716148","description":"test transaction","entries":[{"accountName":"assetAccount","accountType":"ASSET","amount":1.44,"type":"DEBIT"},{"accountName":"revenueAccount","accountType":"REVENUE","amount":1.44,"type":"CREDIT"}],"id":1}]

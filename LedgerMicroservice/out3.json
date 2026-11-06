@@ -1,0 +1,1 @@
+[{"name":"test","type":"ASSET","ownerId":2,"id":1,"normalType":"NORMAL_DEBIT_ACCOUNT"},{"name":"revenueAccount","type":"REVENUE","ownerId":2,"id":2,"normalType":"NORMAL_CREDIT_ACCOUNT"},{"name":"assetAccount","type":"ASSET","ownerId":2,"id":3,"normalType":"NORMAL_DEBIT_ACCOUNT"}]
