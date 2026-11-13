@@ -1,9 +1,10 @@
-package com.ledger.ledgermicroservice;
+package com.ledger.ledgermicroservice.transaction.adapter.outbound.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-import com.ledger.ledgermicroservice.domain.model.Account;
-import com.ledger.ledgermicroservice.domain.model.Transaction;
+import com.ledger.ledgermicroservice.transaction.model.Direction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,43 +21,50 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "ledger_entries")
-public class LedgerEntry {
+public class TransactionEntryPersistenceModel {
 	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Getter
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "account")
-	private Account account;
+	@Setter
+	@Column(nullable = false)
+	private UUID accountId;
+
+	@Getter
+	@Setter
+	@Column(nullable = false, unique = true)
+	private UUID entryId;
+
+	@Getter
+	@Setter
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
 
 	@Getter
 	@Enumerated(EnumType.STRING)
-	@Column(name = "entry_type")
-	private DebitCredit type;
+	@Column(nullable = false)
+	private Direction direction;
 
 	@Getter
 	@Setter
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "transaction_id")
-	Transaction transaction;
+	TransactionPersistanceModel transaction;
 
 	@Getter
 	@Column(name = "amount", nullable = false)
 	private BigDecimal amount;
 
-	LedgerEntry() {
+	TransactionEntryPersistenceModel() {
 	}
 
-	LedgerEntry(Account account, DebitCredit type, Transaction transaction, BigDecimal amount) {
-		this.account = account;
-		this.type = type;
-		this.transaction = transaction;
+	public TransactionEntryPersistenceModel(UUID account, Direction direction, BigDecimal amount, LocalDateTime createdAt) {
+		this.accountId = account;
+		this.direction = direction;
 		this.amount = amount;
+		this.createdAt = createdAt;
 	}
 
-	public static enum DebitCredit {
-		DEBIT, CREDIT
-	}
 }
