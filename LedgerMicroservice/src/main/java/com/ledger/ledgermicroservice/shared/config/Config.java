@@ -3,15 +3,15 @@ package com.ledger.ledgermicroservice.shared.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.ledger.ledgermicroservice.account.application.service.AccountDomainService;
-import com.ledger.ledgermicroservice.account.ports.inbound.CreateAccountUseCase;
-import com.ledger.ledgermicroservice.account.ports.outbound.AccountPersistancePort;
-import com.ledger.ledgermicroservice.transaction.application.service.TranasactionEntryDomainService;
-import com.ledger.ledgermicroservice.transaction.application.service.TransactionDomainService;
-import com.ledger.ledgermicroservice.transaction.ports.inbound.CreateTransactionUseCase;
-import com.ledger.ledgermicroservice.transaction.ports.inbound.GetAllTransactionEntriesForAccountFromTo;
-import com.ledger.ledgermicroservice.transaction.ports.outbound.TransactionEntryPersistancePort;
-import com.ledger.ledgermicroservice.transaction.ports.outbound.TransactionPersistancePort;
+import com.ledger.ledgermicroservice.application.ports.inbound.CreateAccountUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.CreateLedgerTransactionUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.GetAllLedgerTransactionEntriesForAccountFromTo;
+import com.ledger.ledgermicroservice.application.ports.outbound.AccountPersistancePort;
+import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionEntryPersistancePort;
+import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionPersistancePort;
+import com.ledger.ledgermicroservice.application.service.AccountDomainService;
+import com.ledger.ledgermicroservice.application.service.LedgerTranasactionEntryDomainService;
+import com.ledger.ledgermicroservice.application.service.LedgerTransactionDomainService;
 
 @Configuration
 public class Config {
@@ -21,14 +21,14 @@ public class Config {
 	}
 
 	@Bean
-	CreateTransactionUseCase getCreateTransactionUseCase(TransactionPersistancePort port) {
-		return new TransactionDomainService(port);
+	CreateLedgerTransactionUseCase getCreateTransactionUseCase(LedgerTransactionPersistancePort port) {
+		return new LedgerTransactionDomainService(port);
 	}
 
 	@Bean
-	GetAllTransactionEntriesForAccountFromTo getGetAllTransactionEntriesForAccountFromTo(
-			TransactionEntryPersistancePort port) {
-		return new TranasactionEntryDomainService(port);
+	GetAllLedgerTransactionEntriesForAccountFromTo getGetAllTransactionEntriesForAccountFromTo(
+			LedgerTransactionEntryPersistancePort port) {
+		return new LedgerTranasactionEntryDomainService(port);
 	}
 
 }
