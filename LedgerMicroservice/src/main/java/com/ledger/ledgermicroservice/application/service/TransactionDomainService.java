@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransactionUseCase;
@@ -33,17 +34,16 @@ public class TransactionDomainService implements CreateTransactionUseCase {
 	private final LedgerTransactionEntryPersistancePort ledgerTransactionEntryPersistancePort;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
 	public void createTransactionUseCase(LedgerTransactionRecord rec) throws Exception {
 		List<UUID> accountList = rec.entries().stream().map(LedgerTransactionEntryRecord::accountId).toList();
 		// find and lock all accounts for this transaction
 		Map<UUID, Account> accountMap = accountPersistancePort.findAndLockAllByUUID(accountList).stream()
 				.collect(Collectors.toMap(e -> e.getId(), e -> e));
 
-		accountMap.keySet().forEach(k -> System.out.println(k));
-		rec.entries().forEach(e -> System.out.println(e.accountId()));
 		List<LocalDateTime> lastList = accountMap.values().stream().map(Account::getLastAt).toList();
 		accountList = accountMap.keySet().stream().toList();
+		// get the delta i.e sum of CREDITS and DEBITS from the lasAt at up
 		Map<UUID, AccountDeltaRecord> accountDeltaRecordMap = ledgerTransactionEntryPersistancePort
 				.getAccountDeltaFor(lastList, accountList).stream().map(e -> {
 					if (accountMap.get(e.accountUUID()).getNormalType() == NormalType.NORMAL_CREDIT_ACCOUNT) {
@@ -52,12 +52,6 @@ public class TransactionDomainService implements CreateTransactionUseCase {
 					return e;
 				}).collect(Collectors.toMap(e -> e.accountUUID(), e -> e));
 
-		/*
-		 * Map<UUID, BigDecimal> accountTransTotalMap = rec.entries().stream()
-		 * .collect(Collectors.groupingBy(e -> e.accountId(),
-		 * Collectors.reducing(BigDecimal.ZERO, e -> e.direction() ==
-		 * LedgerDirection.DEBIT ? e.amount() : e.amount().negate(), BigDecimal::add)));
-		 */
 		for (LedgerTransactionEntryRecord ent : rec.entries()) {
 			Account acc = accountMap.get(ent.accountId());
 			if (ent.direction() == LedgerDirection.CREDIT)
@@ -66,15 +60,17 @@ public class TransactionDomainService implements CreateTransactionUseCase {
 				acc.doDebit(ent.amount(), accountDeltaRecordMap.get(ent.accountId()).delta());
 		}
 
-		TransactionBuilder builder = LedgerTransaction.builder().genenrateNewId().now().setDesc(rec.desc());
+		LocalDateTime now = LocalDateTime.now();
+		TransactionBuilder builder = LedgerTransaction.builder().setcreatedAt(now).setDesc(rec.desc());
 		for (LedgerTransactionEntryRecord entr : rec.entries()) {
-			LedgerTransactionEntry lEntr = LedgerTransactionEntry.builder().generateNewId().now()
+			LedgerTransactionEntry lEntr = LedgerTransactionEntry.builder().setCreatedAt(now)
 					.setAccountId(entr.accountId()).setDirection(entr.direction()).setAmount(entr.amount()).build();
 
 			builder.addEntry(lEntr);
 		}
 		ledgerTransactionPersistancePort.save(builder.build());
 
+		// save balance and lastAt after transaction
 		for (AccountDeltaRecord deltaRec : accountDeltaRecordMap.values()) {
 			Account acc = accountMap.get(deltaRec.accountUUID());
 			acc.addDelta(deltaRec.delta(), deltaRec.latestAt());

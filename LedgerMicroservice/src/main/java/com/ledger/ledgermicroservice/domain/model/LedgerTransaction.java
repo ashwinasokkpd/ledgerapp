@@ -79,8 +79,8 @@ public class LedgerTransaction {
 		}
 
 		public TransactionBuilder addEntry(LedgerTransactionEntry entr) throws Exception {
-			if (this.id == null)
-				throw new Exception("Id not set");
+//			if (this.id == null)
+//				throw new Exception("Id not set");
 			entries.add(entr);
 			entr.setTransactionId(this.id);
 			return this;

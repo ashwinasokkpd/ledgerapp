@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.ledger.ledgermicroservice.domain.exception.InsufficientFundException;
+import com.ledger.ledgermicroservice.domain.exception.LedgerEntriesForAccountUnbalancedException;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,38 +48,45 @@ public class Account {
 
 	public void doCredit(BigDecimal amount, BigDecimal delta) throws Exception {
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
-			throw new Exception("Amount is negative");
+			throw new IllegalArgumentException("Amount is negative");
 		}
+		System.out.println(balance);
+
 		amount = getNormalType() == NormalType.NORMAL_DEBIT_ACCOUNT ? amount.negate() : amount;
-		this.balance.add(amount).add(delta);
-		if (amount.compareTo(BigDecimal.ZERO) < 0) {
-			this.balance.subtract(amount);
-			throw new Exception("Balance went below zero");
+		balance = balance.add(amount).add(delta);
+
+		if (balance.compareTo(BigDecimal.ZERO) < 0) {
+			balance = balance.subtract(delta);
+			balance = balance.subtract(amount);
+			throw new InsufficientFundException("Balance went below zero");
 		}
+		balance = balance.subtract(delta);
 	}
 
 	public void doDebit(BigDecimal amount, BigDecimal delta) throws Exception {
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
-			throw new Exception("Amount is negative");
+			throw new IllegalArgumentException("Amount is negative");
 		}
 		amount = getNormalType() == NormalType.NORMAL_DEBIT_ACCOUNT ? amount : amount.negate();
-		this.balance.add(amount).add(delta);
-		if (amount.compareTo(BigDecimal.ZERO) < 0) {
-			this.balance.subtract(amount);
-			throw new Exception("Balance went below zero");
+		balance = balance.add(amount).add(delta);
+		if (balance.compareTo(BigDecimal.ZERO) < 0) {
+			balance = balance.subtract(delta);
+			balance = balance.subtract(amount);
+			throw new InsufficientFundException("Balance went below zero");
 		}
+		balance = balance.subtract(delta);
 	}
 
 	public void addDelta(BigDecimal delta, LocalDateTime asOf) throws Exception {
 		if (delta.compareTo(BigDecimal.ZERO) < 0) {
-			throw new Exception("Balance is below zero");
+			throw new LedgerEntriesForAccountUnbalancedException("Balance is below zero");
 		}
-		balance.add(delta);
+		balance = balance.add(delta);
 		lastAt = asOf;
 	}
 
 	public static Account createUsing(String name, AccountType type, Long ownerId, BigDecimal balance) {
-		return new Account(UUID.randomUUID(), name, type, ownerId, balance);
+		return new Account(null, name, type, ownerId, balance);
 	}
 
 	public static Account createUsing(String name, AccountType type, Long ownerId, BigDecimal balance,

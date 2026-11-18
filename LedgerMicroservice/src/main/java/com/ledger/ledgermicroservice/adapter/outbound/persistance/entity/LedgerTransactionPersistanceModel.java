@@ -25,23 +25,22 @@ import lombok.Setter;
 @Table(name = "transactions")
 public class LedgerTransactionPersistanceModel {
 	@Getter
+	@Setter
 	@Id
 	@UuidGenerator(style = UuidGenerator.Style.VERSION_7)
 	private UUID id;
 
 	@Getter
 	@Setter
-	@Column(nullable = false, unique = true)
-	private UUID transactionId;
-
-	@Getter
 	@Column(nullable = false)
 	private String description;
 
 	@Getter
+	@Setter
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Setter
 	@OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<LedgerTransactionEntryPersistenceModel> entries = new ArrayList<LedgerTransactionEntryPersistenceModel>();
 

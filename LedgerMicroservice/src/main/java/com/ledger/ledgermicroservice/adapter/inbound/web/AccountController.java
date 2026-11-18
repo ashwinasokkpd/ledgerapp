@@ -31,19 +31,18 @@ public class AccountController {
 	}
 
 	@GetMapping
-
 	ResponseEntity<List<Account>> getAllAccounts() {
 		return ResponseEntity.ok(getAllAccountsUseCase.getAllAccounts());
-	}
-
-	@GetMapping("/{id}")
-
-	ResponseEntity<Account> findAccountById(@PathVariable UUID id) {
-		return ResponseEntity.ok(findAccountByIdUseCase.findAccountById(id));
 	}
 
 	@PostMapping
 	void addAccount(@RequestBody CreateAccountUseCase.AccountDataHolder acc) {
 		createAccountUseCase.createAccount(acc);
 	}
+
+	@GetMapping("/{id}")
+	ResponseEntity<Account> findAccountById(@PathVariable UUID id) {
+		return ResponseEntity.ok(findAccountByIdUseCase.findAccountById(id));
+	}
+
 }

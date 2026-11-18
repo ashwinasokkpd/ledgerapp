@@ -30,7 +30,7 @@ public class LedgerTransactionEntryPersistanceAdapter implements LedgerTransacti
 				.findByAccountIdAndCreatedAtGreaterThanEqualAndCreatedAtLessThanEqualOrderByCreatedAtDesc(accountId,
 						from, to)) {
 			LedgerTransactionEntry entry = LedgerTransactionEntry.builder().setId(ent.getId())
-					.setAccountId(ent.getAccountId()).setTransactionId(ent.getTransaction().getTransactionId())
+					.setAccountId(ent.getAccountId()).setTransactionId(ent.getTransaction().getId())
 					.setCreatedAt(ent.getCreatedAt()).setAmount(ent.getAmount()).setDirection(ent.getDirection())
 					.build();
 			list.add(entry);

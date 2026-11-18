@@ -1,5 +1,6 @@
 package com.ledger.ledgermicroservice.adapter.inbound.web;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,12 @@ public class TransactionController {
 
 	@PostMapping()
 	ResponseEntity<String> createTransaction(@RequestBody LedgerTransactionRecord rec) throws Exception {
-		createTransactionUseCase.createTransactionUseCase(rec);
-		return ResponseEntity.ok("Success");
+		try {
+			createTransactionUseCase.createTransactionUseCase(rec);
+			return ResponseEntity.ok("Transaction Succeed");
+		} catch (Exception ex) {
+			return new ResponseEntity<>("Transaction Failed(" + ex.getMessage() + ")", HttpStatus.BAD_REQUEST);
+		}
+
 	}
 }

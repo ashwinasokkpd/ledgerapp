@@ -50,6 +50,7 @@ public class LedgerTransactionEntryPersistenceModel {
 	LedgerTransactionPersistanceModel transaction;
 
 	@Getter
+	@Setter
 	@Column(name = "amount", nullable = false)
 	private BigDecimal amount;
 

@@ -25,7 +25,7 @@ public class LedgerTransactionPersistanceAdapter implements LedgerTransactionPer
 	public void save(LedgerTransaction trs) {
 		LedgerTransactionPersistanceModel transPers = new LedgerTransactionPersistanceModel(trs.getDescription(),
 				trs.getCreatedAt());
-		transPers.setTransactionId(trs.getTransactionId());
+
 		for (LedgerTransactionEntry ent : trs.getEntries()) {
 			LedgerTransactionEntryPersistenceModel lEntr = new LedgerTransactionEntryPersistenceModel(
 					ent.getAccountId(), ent.getDirection(), ent.getAmount(), ent.getCreatedAt());
@@ -41,10 +41,10 @@ public class LedgerTransactionPersistanceAdapter implements LedgerTransactionPer
 		for (LedgerTransactionPersistanceModel transModel : repo.findAll()) {
 			LedgerTransaction.TransactionBuilder trans = LedgerTransaction.builder();
 			trans.setcreatedAt(transModel.getCreatedAt()).setDesc(transModel.getDescription())
-					.setId(transModel.getTransactionId());
+					.setId(transModel.getId());
 			for (LedgerTransactionEntryPersistenceModel ent : transModel.getEntries()) {
 				LedgerTransactionEntry entry = LedgerTransactionEntry.builder().setId(ent.getId())
-						.setAccountId(ent.getAccountId()).setTransactionId(transModel.getTransactionId())
+						.setAccountId(ent.getAccountId()).setTransactionId(transModel.getId())
 						.setCreatedAt(ent.getCreatedAt()).setAmount(ent.getAmount()).setDirection(ent.getDirection())
 						.build();
 				trans.addEntry(entry);
@@ -56,14 +56,14 @@ public class LedgerTransactionPersistanceAdapter implements LedgerTransactionPer
 
 	@Override
 	public LedgerTransaction getTransactionWithId(UUID uuid) throws Exception {
-		LedgerTransactionPersistanceModel transModel = repo.findByTransactionId(uuid);
+		LedgerTransactionPersistanceModel transModel = repo.findById(uuid)
+				.orElseThrow(() -> new RuntimeException("Transaction not found"));
 
 		LedgerTransaction.TransactionBuilder trans = LedgerTransaction.builder();
-		trans.setcreatedAt(transModel.getCreatedAt()).setDesc(transModel.getDescription())
-				.setId(transModel.getTransactionId());
+		trans.setcreatedAt(transModel.getCreatedAt()).setDesc(transModel.getDescription()).setId(transModel.getId());
 		for (LedgerTransactionEntryPersistenceModel ent : transModel.getEntries()) {
 			LedgerTransactionEntry entry = LedgerTransactionEntry.builder().setId(ent.getId())
-					.setAccountId(ent.getAccountId()).setTransactionId(transModel.getTransactionId())
+					.setAccountId(ent.getAccountId()).setTransactionId(transModel.getId())
 					.setCreatedAt(ent.getCreatedAt()).setAmount(ent.getAmount()).setDirection(ent.getDirection())
 					.build();
 			trans.addEntry(entry);

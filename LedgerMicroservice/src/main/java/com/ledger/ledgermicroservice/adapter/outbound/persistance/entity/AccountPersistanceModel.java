@@ -1,6 +1,7 @@
 package com.ledger.ledgermicroservice.adapter.outbound.persistance.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -43,25 +44,26 @@ public class AccountPersistanceModel {
 	private BigDecimal balance;
 
 	@Column(nullable = true)
-	private UUID asOfTransacion;
+	private LocalDateTime lastAt;
 
-	public AccountPersistanceModel(String name, Account.AccountType type, UUID uuid, Long ownerId, BigDecimal balance) {
+	public AccountPersistanceModel(String name, Account.AccountType type, UUID uuid, Long ownerId, BigDecimal balance,
+			LocalDateTime lastAt) {
 		this.name = name;
 		this.type = type;
 		this.id = uuid;
 		this.ownerId = ownerId;
 		this.balance = balance;
+		this.lastAt = lastAt;
 	}
 
 	public static AccountPersistanceModel fromDomain(Account acc) {
 		AccountPersistanceModel persModel = new AccountPersistanceModel(acc.getName(), acc.getType(), acc.getId(),
-				acc.getOwnerId(), acc.getBalance());
+				acc.getOwnerId(), acc.getBalance(), acc.getLastAt());
 		return persModel;
 	}
 
 	public static Account toDomain(AccountPersistanceModel persModel) {
-		return Account.createUsing(persModel.name, persModel.type, persModel.ownerId, persModel.balance,
-				persModel.getId());
+		return Account.createUsing(persModel.name, persModel.type, persModel.ownerId, persModel.balance, persModel.id);
 	}
 
 }

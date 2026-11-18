@@ -28,7 +28,7 @@ public interface LedgerTransactionEntryRepo extends JpaRepository<LedgerTransact
 			+ " MAX(e.created_at) as latest_at FROM ledger_entries as e "
 			+ "RIGHT JOIN UNNEST(CAST(:createdAts as timestamp[]),CAST(:accountIds as uuid[])) "
 			+ "as va(created_at,account_id) "
-			+ "ON e.created_at >=va.created_at AND e.id=va.account_id GROUP BY va.account_id ", nativeQuery = true)
+			+ "ON  e.account_id=va.account_id AND (va.created_at IS NULL OR e.created_at >=va.created_at)   GROUP BY va.account_id ", nativeQuery = true)
 	List<AccountDeltaRecord> getAccountDeltaFor(@Param("createdAts") LocalDateTime[] createdAts,
 			@Param("accountIds") UUID[] accountIds);
 }
