@@ -63,7 +63,8 @@ public class AccountPersistanceModel {
 	}
 
 	public static Account toDomain(AccountPersistanceModel persModel) {
-		return Account.createUsing(persModel.name, persModel.type, persModel.ownerId, persModel.balance, persModel.id);
+		return Account.createUsing(persModel.name, persModel.type, persModel.ownerId, persModel.balance, persModel.id,
+				persModel.lastAt);
 	}
 
 }

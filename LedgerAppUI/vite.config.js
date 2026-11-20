@@ -12,13 +12,13 @@ export default defineConfig({
   },     server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8100',
         changeOrigin: true,
         secure: false,
         // Force the origin header to match the target backend
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            proxyReq.setHeader('Origin', 'http://localhost:8080');
+            proxyReq.setHeader('Origin', 'http://localhost:8100');
           });
         },
       }

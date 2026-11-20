@@ -16,6 +16,7 @@ const AppRoutes = () => {
         <Route path="/redirector" element={<DashboardRedirector />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/customer/*" element={<CustomerRoutes />} />
+        
       </Routes>
     </Router>
   );

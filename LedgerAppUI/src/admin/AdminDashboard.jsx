@@ -21,16 +21,8 @@ const AdminDashboard = () => {
   return (
     <>
       <AdminHeader />
-      <div>
-        <h2>Welcome admin</h2>
-        <button onClick={logout}>Logout</button>
-        <div>{data}</div>
-        <div>{count}</div>
-        <button onClick={handleGetTest}>TestGet</button>
-        <button onClick={handlePostTest}>TestPost</button>
-
-        <br />
-        <Link to="/admin/Test">TestPage</Link>
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <h2>Welcome [admin]</h2>
       </div>
     </>
   );

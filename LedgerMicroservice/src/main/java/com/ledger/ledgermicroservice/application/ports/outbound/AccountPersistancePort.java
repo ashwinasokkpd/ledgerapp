@@ -14,4 +14,6 @@ public interface AccountPersistancePort {
 
 	public List<Account> findAndLockAllByUUID(List<UUID> uuids);
 
+	Account findByOwnerId(Long id);
+
 }

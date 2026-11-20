@@ -73,7 +73,7 @@ public class TransactionDomainService implements CreateTransactionUseCase {
 		// save balance and lastAt after transaction
 		for (AccountDeltaRecord deltaRec : accountDeltaRecordMap.values()) {
 			Account acc = accountMap.get(deltaRec.accountUUID());
-			acc.addDelta(deltaRec.delta(), deltaRec.latestAt());
+			acc.addDelta(deltaRec.delta(), now);
 			accountPersistancePort.save(acc);
 		}
 	}

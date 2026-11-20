@@ -37,20 +37,20 @@ public class Account {
 
 	}
 
-	public Account(UUID id, String name, AccountType type, Long ownerId, BigDecimal balance) {
+	public Account(UUID id, String name, AccountType type, Long ownerId, BigDecimal balance, LocalDateTime lastAt) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
-		this.type = type;
 		this.ownerId = ownerId;
 		this.balance = balance;
+		this.lastAt = lastAt;
+
 	}
 
 	public void doCredit(BigDecimal amount, BigDecimal delta) throws Exception {
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException("Amount is negative");
 		}
-		System.out.println(balance);
 
 		amount = getNormalType() == NormalType.NORMAL_DEBIT_ACCOUNT ? amount.negate() : amount;
 		balance = balance.add(amount).add(delta);
@@ -58,7 +58,7 @@ public class Account {
 		if (balance.compareTo(BigDecimal.ZERO) < 0) {
 			balance = balance.subtract(delta);
 			balance = balance.subtract(amount);
-			throw new InsufficientFundException("Balance went below zero");
+			throw new InsufficientFundException(name + "(" + id + ")" + "does not have sufficient balance");
 		}
 		balance = balance.subtract(delta);
 	}
@@ -72,7 +72,7 @@ public class Account {
 		if (balance.compareTo(BigDecimal.ZERO) < 0) {
 			balance = balance.subtract(delta);
 			balance = balance.subtract(amount);
-			throw new InsufficientFundException("Balance went below zero");
+			throw new InsufficientFundException(name + "(" + id + ")" + "does not have sufficient balance");
 		}
 		balance = balance.subtract(delta);
 	}
@@ -85,13 +85,14 @@ public class Account {
 		lastAt = asOf;
 	}
 
-	public static Account createUsing(String name, AccountType type, Long ownerId, BigDecimal balance) {
-		return new Account(null, name, type, ownerId, balance);
+	public static Account createUsing(String name, AccountType type, Long ownerId, BigDecimal balance, UUID accountUUID,
+			LocalDateTime lastAt) {
+		return new Account(accountUUID, name, type, ownerId, balance, lastAt);
 	}
 
 	public static Account createUsing(String name, AccountType type, Long ownerId, BigDecimal balance,
-			UUID accountUUID) {
-		return new Account(accountUUID, name, type, ownerId, balance);
+			LocalDateTime lastAt) {
+		return new Account(null, name, type, ownerId, balance, lastAt);
 	}
 
 	public static enum NormalType {

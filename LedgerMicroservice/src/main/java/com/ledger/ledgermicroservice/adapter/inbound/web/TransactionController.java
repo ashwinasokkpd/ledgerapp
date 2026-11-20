@@ -24,6 +24,7 @@ public class TransactionController {
 			createTransactionUseCase.createTransactionUseCase(rec);
 			return ResponseEntity.ok("Transaction Succeed");
 		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 			return new ResponseEntity<>("Transaction Failed(" + ex.getMessage() + ")", HttpStatus.BAD_REQUEST);
 		}
 

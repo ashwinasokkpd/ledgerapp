@@ -13,22 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateAccountUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByIdUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByOwnerIdUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.GetAllAccountsUseCase;
 import com.ledger.ledgermicroservice.domain.model.Account;
 
+import lombok.AllArgsConstructor;
+
 @RequestMapping("/account")
 @RestController
+@AllArgsConstructor
 public class AccountController {
 	private final CreateAccountUseCase createAccountUseCase;
 	private final GetAllAccountsUseCase getAllAccountsUseCase;
 	private final FindAccountByIdUseCase findAccountByIdUseCase;
-
-	public AccountController(CreateAccountUseCase createAccountUseCase, GetAllAccountsUseCase getAllAccountsUseCase,
-			FindAccountByIdUseCase findAccountByIdUseCase) {
-		this.createAccountUseCase = createAccountUseCase;
-		this.getAllAccountsUseCase = getAllAccountsUseCase;
-		this.findAccountByIdUseCase = findAccountByIdUseCase;
-	}
+	private final FindAccountByOwnerIdUseCase findAccountByOwnerIdUseCase;
 
 	@GetMapping
 	ResponseEntity<List<Account>> getAllAccounts() {
@@ -43,6 +41,11 @@ public class AccountController {
 	@GetMapping("/{id}")
 	ResponseEntity<Account> findAccountById(@PathVariable UUID id) {
 		return ResponseEntity.ok(findAccountByIdUseCase.findAccountById(id));
+	}
+
+	@GetMapping("/from-ownerid/{id}")
+	ResponseEntity<Account> findAccountByOwnerId(@PathVariable Long id) {
+		return ResponseEntity.ok(findAccountByOwnerIdUseCase.findAccountByOwnerIdUseCase(id));
 	}
 
 }

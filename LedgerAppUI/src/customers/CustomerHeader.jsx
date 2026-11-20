@@ -1,13 +1,11 @@
-import { NavLink } from "react-router";
-import { useNavigate, Link } from "react-router-dom";
-import { MenuIcon, LogOut, User, Settings, CreditCard, Menu } from "lucide-react";
+import { NavLink, Link } from "react-router";
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
-  SheetDescription,
   SheetHeader,
   SheetFooter,
   SheetClose,
@@ -18,53 +16,53 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import useAuth from "@/AuthContext";
 
+const linkStyles = ({ isActive }) =>
+  `text-sm font-medium transition-colors hover:text-foreground/80 ${isActive ? "text-foreground font-semibold" : "text-foreground/60"
+  }`;
+
 export default function Header() {
   const { logout, loginUser } = useAuth();
-  const navigate = useNavigate();
-  const linkStyles = ({ isActive }) =>
-    `text-sm font-medium transition-colors hover:text-foreground/80 ${
-      isActive ? "text-foreground font-semibold" : "text-foreground/60"
-    }`;
+  const initial = loginUser?.username?.[0]?.toUpperCase() ?? "?";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex h-14 items-center justify-between">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center space-x-6">
           <NavLink to="/" className="font-bold">
-            Hotel
+            Ledger
           </NavLink>
-          <nav className="hidden md:flex items-center space-x-6">
-            <NavLink to="/customer/new-booking" className={linkStyles}>
-              New Booking
-            </NavLink>
+          <nav className="hidden items-center space-x-6 md:flex">
+
           </nav>
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="hidden md:flex items-center ">
+          {/* Desktop user menu */}
+          <div className="hidden items-center md:flex">
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
-                      <AvatarFallback>
-                        {loginUser.username.toUpperCase().substring(0, 1)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full"
+                    aria-label="Open user menu"
+                  />
                 }
-              />
-              <DropdownMenuContent className="w-32">
+              >
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="" />
+                  <AvatarFallback>{initial}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="w-40">
                 <DropdownMenuGroup>
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Billing</DropdownMenuItem>
@@ -80,22 +78,25 @@ export default function Header() {
             </DropdownMenu>
           </div>
 
+          {/* Mobile menu */}
           <div className="flex md:hidden">
             <Sheet>
               <SheetTrigger
                 render={
-                  <Button variant="ghost">
-                    <Menu />
-                  </Button>
+                  <Button variant="ghost" size="icon" aria-label="Open navigation" />
                 }
-              ></SheetTrigger>
+              >
+                <Menu />
+              </SheetTrigger>
               <SheetContent>
                 <SheetHeader>
                   <SheetTitle>Navigation</SheetTitle>
                 </SheetHeader>
-
-                <Button onClick={() => navigate("/")}>Home</Button>
-
+                <nav className="flex flex-col gap-2 px-4">
+                  <SheetClose render={<Link to="/" className="text-sm font-medium" />}>
+                    Home
+                  </SheetClose>
+                </nav>
                 <SheetFooter>
                   <Button variant="destructive" onClick={logout}>
                     Log out

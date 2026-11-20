@@ -38,7 +38,7 @@ public class BaseConfiguration {
 		//@formatter:off
 		return http.authorizeHttpRequests(auth -> 
 		                auth.requestMatchers(org.springframework.http.HttpMethod.OPTIONS,"/**").permitAll()
-		                    .requestMatchers("/api/auth/login","/api/auth/refresh","/api/auth/logout","/api/customers/new-customer","/api/auth/is-username-available").permitAll()
+		                    .requestMatchers("/api/auth/login","/api/auth/refresh","/api/auth/logout","/api/customers/new-customer","/api/auth/is-username-available","/api/ledger/**").permitAll()
                             .requestMatchers("/api/admin/**").hasRole("ADMIN")
 		                    .requestMatchers("/api/auth/login/test").authenticated()
 		                    .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()     

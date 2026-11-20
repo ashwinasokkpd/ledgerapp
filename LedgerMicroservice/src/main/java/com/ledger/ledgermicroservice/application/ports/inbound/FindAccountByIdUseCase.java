@@ -6,4 +6,5 @@ import com.ledger.ledgermicroservice.domain.model.Account;
 
 public interface FindAccountByIdUseCase {
 	Account findAccountById(UUID id);
+
 }

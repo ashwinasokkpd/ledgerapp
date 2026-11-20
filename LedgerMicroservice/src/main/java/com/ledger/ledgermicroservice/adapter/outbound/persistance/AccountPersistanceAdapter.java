@@ -43,4 +43,10 @@ public class AccountPersistanceAdapter implements AccountPersistancePort {
 		return accountsPersList.stream().map(AccountPersistanceModel::toDomain).toList();
 	}
 
+	@Override
+	public Account findByOwnerId(Long id) {
+		return repo.findByOwnerId(id).map(AccountPersistanceModel::toDomain).orElse(null);
+
+	}
+
 }

@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateAccountUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateLedgerTransactionUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransactionUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransferUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByIdUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.GetAllLedgerTransactionEntriesForAccountFromTo;
 import com.ledger.ledgermicroservice.application.ports.outbound.AccountPersistancePort;
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionEntryPersistancePort;
@@ -12,6 +15,7 @@ import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactio
 import com.ledger.ledgermicroservice.application.service.AccountDomainService;
 import com.ledger.ledgermicroservice.application.service.LedgerTranasactionEntryDomainService;
 import com.ledger.ledgermicroservice.application.service.LedgerTransactionDomainService;
+import com.ledger.ledgermicroservice.application.service.TransferDomainService;
 
 @Configuration
 public class Config {
@@ -29,6 +33,13 @@ public class Config {
 	GetAllLedgerTransactionEntriesForAccountFromTo getGetAllTransactionEntriesForAccountFromTo(
 			LedgerTransactionEntryPersistancePort port) {
 		return new LedgerTranasactionEntryDomainService(port);
+	}
+
+	@Bean
+	CreateTransferUseCase getCreateTransferUseCase(CreateTransactionUseCase createTransactionUseCase,
+			FindAccountByIdUseCase findAccountByIdUseCase) {
+
+		return new TransferDomainService(createTransactionUseCase);
 	}
 
 }

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../AuthContext.jsx";
 import HttpClient from "../httpClient.js";
-import Header from "./CustomerHeader";
-const AdminDashboard = () => {
+import CustomerHeader from "./CustomerHeader.jsx";
+const CustomerDashboard = () => {
   const { logout, loginUser } = useAuth();
   const [data, setData] = useState("");
   const [count, setCount] = useState(0);
@@ -20,18 +20,11 @@ const AdminDashboard = () => {
   };
   return (
     <>
-      <Header />
-      <div>
-        <button onClick={logout}>Logout</button>
-        <div>{data}</div>
-        <div>{count}</div>
-        <button onClick={handleGetTest}>TestGet</button>
-        <button onClick={handlePostTest}>TestPost</button>
-
-        <br />
-        <Link to="/admin/Test">TestPage</Link>
+      <CustomerHeader />
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <h2>Welcome [customer]</h2>
       </div>
     </>
   );
 };
-export default AdminDashboard;
+export default CustomerDashboard;
