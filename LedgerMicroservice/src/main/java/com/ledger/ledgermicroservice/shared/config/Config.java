@@ -7,11 +7,12 @@ import com.ledger.ledgermicroservice.application.ports.inbound.CreateAccountUseC
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateLedgerTransactionUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransactionUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransferUseCase;
-import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByIdUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByOwnerIdUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.GetAllLedgerTransactionEntriesForAccountFromTo;
 import com.ledger.ledgermicroservice.application.ports.outbound.AccountPersistancePort;
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionEntryPersistancePort;
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionPersistancePort;
+import com.ledger.ledgermicroservice.application.ports.outbound.UserIdPort;
 import com.ledger.ledgermicroservice.application.service.AccountDomainService;
 import com.ledger.ledgermicroservice.application.service.LedgerTranasactionEntryDomainService;
 import com.ledger.ledgermicroservice.application.service.LedgerTransactionDomainService;
@@ -37,9 +38,9 @@ public class Config {
 
 	@Bean
 	CreateTransferUseCase getCreateTransferUseCase(CreateTransactionUseCase createTransactionUseCase,
-			FindAccountByIdUseCase findAccountByIdUseCase) {
+			FindAccountByOwnerIdUseCase findAccountByOwnerIdUseCase, UserIdPort userIdPort) {
 
-		return new TransferDomainService(createTransactionUseCase);
+		return new TransferDomainService(createTransactionUseCase, findAccountByOwnerIdUseCase, userIdPort);
 	}
 
 }

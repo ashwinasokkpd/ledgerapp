@@ -9,6 +9,7 @@ const extractUserFromToken = (token) => {
     return {
       username: decoded.sub,
       roles: decoded.roles,
+      id: decoded.id
     };
   } catch (e) {
     console.log(e);

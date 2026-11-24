@@ -22,7 +22,10 @@ const CustomerDashboard = () => {
     <>
       <CustomerHeader />
       <div className="flex items-center justify-center min-h-[80vh]">
-        <h2>Welcome [customer]</h2>
+        <div className="flex flex-col items-center justify-center min-h-[80vh]">
+          <h1 className="text-3xl font-bold">Welcome {loginUser.username}</h1><br />
+          <h2 className="text-lg text-gray-600"> [{loginUser.roles}][{loginUser.id}]</h2>
+        </div >
       </div>
     </>
   );

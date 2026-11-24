@@ -62,6 +62,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					List<?> claimsList = claims.get("roles", List.class);
 					Set<UserRole> roles = claimsList.stream()
 							.map((Object o) -> new UserRole(o.toString().toUpperCase())).collect(Collectors.toSet());
+					Long id = claims.get("id", Long.class);
+					request.setAttribute("USER_ID", id);
 					LoginUser user = LoginUser.builder(claims.getSubject(), null).addAllRoles(roles).build();
 
 					UsernamePasswordAuthenticationToken authentication = UsernamePasswordAuthenticationToken

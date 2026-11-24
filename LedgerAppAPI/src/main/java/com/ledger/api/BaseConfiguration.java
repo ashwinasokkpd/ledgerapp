@@ -23,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.ledger.api.authentication.CorreleationAndUserIdFilter;
 import com.ledger.api.authentication.JwtAuthenticationFilter;
 
 import jakarta.servlet.DispatcherType;
@@ -34,7 +35,8 @@ public class BaseConfiguration {
 
 	@Bean
 	SecurityFilterChain getSecurityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter,
-			AuthenticationEntryPoint authenticationEntryPoint, CorsConfigurationSource configurationSource) {
+			CorreleationAndUserIdFilter correleationAndUserIdFilter, AuthenticationEntryPoint authenticationEntryPoint,
+			CorsConfigurationSource configurationSource) {
 		//@formatter:off
 		return http.authorizeHttpRequests(auth -> 
 		                auth.requestMatchers(org.springframework.http.HttpMethod.OPTIONS,"/**").permitAll()
@@ -48,6 +50,7 @@ public class BaseConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                    .cors(corsCustomizeir->corsCustomizeir.configurationSource(configurationSource))
                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                   .addFilterAfter(correleationAndUserIdFilter, JwtAuthenticationFilter.class)
                    .exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint))
 				   .build();
 		//@formatter:on
