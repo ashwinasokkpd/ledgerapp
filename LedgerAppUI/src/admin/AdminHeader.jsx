@@ -38,9 +38,14 @@ export default function Header() {
             Ledger
           </NavLink>
           <nav className="hidden items-center space-x-6 md:flex">
-
             <NavLink to="/admin/fund-transfer" end className={linkStyles}>
               Fund Transfer
+            </NavLink>
+            <NavLink to="/admin/deposit" end className={linkStyles}>
+              Deposit for Customer
+            </NavLink>
+            <NavLink to="/admin/withdraw" end className={linkStyles}>
+              Withdraw for Customer
             </NavLink>
           </nav>
         </div>

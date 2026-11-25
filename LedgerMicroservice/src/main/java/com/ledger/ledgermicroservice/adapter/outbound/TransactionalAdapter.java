@@ -1,4 +1,4 @@
-package com.ledger.ledgermicroservice.adapter.outbound.persistance;
+package com.ledger.ledgermicroservice.adapter.outbound;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;

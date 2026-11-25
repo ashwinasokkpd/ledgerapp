@@ -41,6 +41,12 @@ export default function Header() {
             <NavLink to="/customer/self-fund-transfer" end className={linkStyles}>
               Fund Transfer
             </NavLink>
+            <NavLink to="/customer/self-deposit" end className={linkStyles}>
+              Deposit
+            </NavLink>
+            <NavLink to="/customer/self-withdraw" end className={linkStyles}>
+              Withdraw
+            </NavLink>
           </nav>
         </div>
 
