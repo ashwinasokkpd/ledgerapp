@@ -5,10 +5,10 @@ import java.util.List;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateSelfTransferUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransactionUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransferUseCase;
+import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByIdUseCase;
 import com.ledger.ledgermicroservice.application.ports.inbound.FindAccountByOwnerIdUseCase;
 import com.ledger.ledgermicroservice.application.ports.outbound.UserIdPort;
 import com.ledger.ledgermicroservice.domain.model.Account;
-import com.ledger.ledgermicroservice.domain.model.LedgerDirection;
 import com.ledger.ledgermicroservice.domain.model.LedgerTransactionEntryRecord;
 import com.ledger.ledgermicroservice.domain.model.LedgerTransactionRecord;
 import com.ledger.ledgermicroservice.domain.model.SelfTransferRecord;
@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 public class TransferDomainService implements CreateTransferUseCase, CreateSelfTransferUseCase {
 	private final CreateTransactionUseCase createTransactionUseCase;
 	private final FindAccountByOwnerIdUseCase findAccountByOwnerIdUseCase;
+	private final FindAccountByIdUseCase findAccountByIdUseCase;
 	private final UserIdPort userIdPort;
 
 	@Override
@@ -27,8 +28,14 @@ public class TransferDomainService implements CreateTransferUseCase, CreateSelfT
 
 		LedgerTransactionEntryRecord senderRec;
 		LedgerTransactionEntryRecord receiverRec;
-		senderRec = new LedgerTransactionEntryRecord(rec.sender(), LedgerDirection.CREDIT, rec.amount());
-		receiverRec = new LedgerTransactionEntryRecord(rec.receiver(), LedgerDirection.DEBIT, rec.amount());
+		Account sender = findAccountByIdUseCase.findAccountById(rec.sender());
+		Account receiver = findAccountByIdUseCase.findAccountById(rec.receiver());
+		if (sender.getNormalType() != receiver.getNormalType()) {
+			throw new Exception("Normal type mismatch for transfer");
+		}
+
+		senderRec = new LedgerTransactionEntryRecord(rec.sender(), sender.getDecreaseDirection(), rec.amount());
+		receiverRec = new LedgerTransactionEntryRecord(rec.receiver(), receiver.getIncreaseDirection(), rec.amount());
 
 		LedgerTransactionRecord traRec = new LedgerTransactionRecord(List.of(senderRec, receiverRec), "Transfer");
 		createTransactionUseCase.createTransactionUseCase(traRec);
@@ -40,12 +47,16 @@ public class TransferDomainService implements CreateTransferUseCase, CreateSelfT
 		LedgerTransactionEntryRecord senderRec;
 		LedgerTransactionEntryRecord receiverRec;
 		Long userId = userIdPort.userId();
-		Account self = findAccountByOwnerIdUseCase.findAccountByOwnerIdUseCase(userId);
+		Account sender = findAccountByOwnerIdUseCase.findAccountByOwnerIdUseCase(userId);
+		Account receiver = findAccountByIdUseCase.findAccountById(rec.receiver());
+		if (sender.getNormalType() != receiver.getNormalType()) {
+			throw new Exception("Normal type mismatch for transfer");
+		}
 
-		senderRec = new LedgerTransactionEntryRecord(self.getId(), LedgerDirection.CREDIT, rec.amount());
-		receiverRec = new LedgerTransactionEntryRecord(rec.receiver(), LedgerDirection.DEBIT, rec.amount());
+		senderRec = new LedgerTransactionEntryRecord(sender.getId(), sender.getDecreaseDirection(), rec.amount());
+		receiverRec = new LedgerTransactionEntryRecord(rec.receiver(), receiver.getIncreaseDirection(), rec.amount());
 
-		LedgerTransactionRecord traRec = new LedgerTransactionRecord(List.of(senderRec, receiverRec), "Transfer");
+		LedgerTransactionRecord traRec = new LedgerTransactionRecord(List.of(senderRec, receiverRec), "Self Transfer");
 		createTransactionUseCase.createTransactionUseCase(traRec);
 	}
 }

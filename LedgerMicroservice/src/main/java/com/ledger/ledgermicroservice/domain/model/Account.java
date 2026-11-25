@@ -47,6 +47,15 @@ public class Account {
 
 	}
 
+	public LedgerDirection getDecreaseDirection() {
+		return this.getNormalType() == NormalType.NORMAL_DEBIT_ACCOUNT ? LedgerDirection.CREDIT : LedgerDirection.DEBIT;
+	}
+
+	public LedgerDirection getIncreaseDirection() {
+		return this.getNormalType() == NormalType.NORMAL_CREDIT_ACCOUNT ? LedgerDirection.CREDIT
+				: LedgerDirection.DEBIT;
+	}
+
 	public void doCredit(BigDecimal amount, BigDecimal delta) throws Exception {
 		if (amount.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException("Amount is negative");

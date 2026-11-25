@@ -6,14 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ledger.ledgermicroservice.application.ports.inbound.CreateTransactionUseCase;
 import com.ledger.ledgermicroservice.application.ports.outbound.AccountPersistancePort;
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionEntryPersistancePort;
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionPersistancePort;
+import com.ledger.ledgermicroservice.application.ports.outbound.TransactionalPort;
 import com.ledger.ledgermicroservice.domain.model.Account;
 import com.ledger.ledgermicroservice.domain.model.Account.NormalType;
 import com.ledger.ledgermicroservice.domain.model.AccountDeltaRecord;
@@ -27,15 +24,18 @@ import com.ledger.ledgermicroservice.domain.model.LedgerTransactionRecord;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Service
 public class TransactionDomainService implements CreateTransactionUseCase {
 	private final LedgerTransactionPersistancePort ledgerTransactionPersistancePort;
 	private final AccountPersistancePort accountPersistancePort;
 	private final LedgerTransactionEntryPersistancePort ledgerTransactionEntryPersistancePort;
+	private final TransactionalPort transactionalPort;
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
 	public void createTransactionUseCase(LedgerTransactionRecord rec) throws Exception {
+		transactionalPort.doTransactionally(this::createTransactionUseCaseInternal, rec);
+	}
+
+	private void createTransactionUseCaseInternal(LedgerTransactionRecord rec) throws Exception {
 		List<UUID> accountList = rec.entries().stream().map(LedgerTransactionEntryRecord::accountId).toList();
 		// find and lock all accounts for this transaction
 		Map<UUID, Account> accountMap = accountPersistancePort.findAndLockAllByUUID(accountList).stream()

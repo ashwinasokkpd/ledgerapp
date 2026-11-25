@@ -8,10 +8,10 @@ import com.ledger.ledgermicroservice.application.ports.inbound.GetAllLedgerTrans
 import com.ledger.ledgermicroservice.application.ports.outbound.LedgerTransactionEntryPersistancePort;
 import com.ledger.ledgermicroservice.domain.model.LedgerTransactionEntry;
 
-public class LedgerTranasactionEntryDomainService implements GetAllLedgerTransactionEntriesForAccountFromTo {
+public class LedgerTransactionEntryDomainService implements GetAllLedgerTransactionEntriesForAccountFromTo {
 	private final LedgerTransactionEntryPersistancePort transactionEntryPersistancePort;
 
-	public LedgerTranasactionEntryDomainService(LedgerTransactionEntryPersistancePort transactionEntryPersistancePort) {
+	public LedgerTransactionEntryDomainService(LedgerTransactionEntryPersistancePort transactionEntryPersistancePort) {
 		this.transactionEntryPersistancePort = transactionEntryPersistancePort;
 	}
 
